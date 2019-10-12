@@ -97,3 +97,23 @@ class BloodPressure(HealthRecordCommonInfo):
         elif (self.systolic_pressure < 90 or self.diastolic_pressure < 60):
             # Range is 90 down and 60 down
             return self.states.get('low')
+
+class BodyPhysique(HealthRecordCommonInfo):
+    """
+        This is the model for a the user's body physique record
+    """
+
+    states = {
+        "under":"Underweight",
+        "normal": "Normal weight",
+        "over": "Overweight",
+        "obese": "Obesity"
+    }
+
+    # Weight
+    weight_in_kilograms = models.IntegerField()
+    # Height
+    height_in_centimeters = models.IntegerField()
+
+    def __str__(self):
+        return f"{self.user}"
