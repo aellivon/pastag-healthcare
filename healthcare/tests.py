@@ -100,3 +100,34 @@ class BloodPressureTestCases(TestCase):
     def test_upper_diastolic_borderline_very_low(self):
         to_test = BloodPressure(systolic_pressure=100,diastolic_pressure=59)
         self.assertEqual(to_test.state, BloodPressure.states.get('low'))
+
+class BodyPhysiqueTestCases(TestCase):
+    """
+        Body Physique Test Cases
+    """
+
+    def test_upper_bmi_borderline_normal(self):
+
+        to_test = BodyPhysique(height_in_centimeters=162,weight_in_kilograms=65)
+        self.assertEqual(to_test.bmi_state, BodyPhysique.states.get('normal'))
+
+    def test_lower_bmi_borderline_normal(self):
+        pass
+
+    def test_upper_bmi_borderline_over(self):
+        pass
+
+    def test_lower_bmi_borderline_over(self):
+        pass
+
+    def test_upper_bmi_borderline_obese(self):
+        pass
+
+    def test_lower_bmi_borderline_obese(self):
+        pass
+
+    def test_upper_bmi_borderline_under(self):
+        pass
+
+    def test_lower_bmi_borderline_under(self):
+        pass
