@@ -62,3 +62,38 @@ class BloodPressure(HealthRecordCommonInfo):
 
     def __str__(self):
         return f"{self.user}"
+
+    @property
+    def pressure(self):
+        """
+            A more readable format for blood pressure
+        """
+        return f"{self.systolic_pressure}/{self.diastolic_pressure}"
+
+    @property
+    def state(self):
+        # Based on
+        # https://www.heart.org/en/health-topics/high-blood-pressure/understanding-blood-pressure-readings
+
+        if ((self.systolic_pressure >= 90 and self.systolic_pressure < 120) and
+            (self.diastolic_pressure >= 60 and self.diastolic_pressure < 80)):
+            # Range is 90 - 119
+            # 60 - 79
+            return self.states.get('normal')
+        elif((self.systolic_pressure >= 120 and self.systolic_pressure < 130) and
+            (self.diastolic_pressure >= 60 and self.diastolic_pressure < 80)):
+            # Range is 120 - 129 and 60 - 79
+            return self.states.get('elevated')
+        elif(self.systolic_pressure > 180 or self.diastolic_pressure > 120):
+            # Calculate the risky here since this one should override things
+            # without constraints
+            return self.states.get('risky')
+        elif(self.systolic_pressure >= 140 or self.diastolic_pressure >= 90):
+            return self.states.get('very_high')
+        elif ((self.systolic_pressure >= 130 and self.systolic_pressure < 140) or
+              (self.diastolic_pressure >= 80 and self.diastolic_pressure < 90)):
+            # Range is 130 - 139 OR 80 - 89
+            return self.states.get('high')
+        elif (self.systolic_pressure < 90 or self.diastolic_pressure < 60):
+            # Range is 90 down and 60 down
+            return self.states.get('low')
