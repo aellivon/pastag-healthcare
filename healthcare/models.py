@@ -150,3 +150,20 @@ class BodyPhysique(HealthRecordCommonInfo):
             return self.states.get('over')
         elif bmi > 30:
             return self.states.get('obese')
+
+    def calculate_penalty(self):
+        """
+            Calculates the penalty the bmi state.
+            This is directly connected to the face that is in the gui.
+        """
+        if not self.bmi_state == self.states.get('normal'):
+            # only calculate penalty if normal
+            if (self.bmi_state == self.states.get('over') or
+                self.bmi_state == self.states.get('obese')):
+                # Group higher states to make it's baseline 30
+
+                # TODO: Test this
+                import math
+                return math.floor(30 - self._calculate_bmi)
+
+        return 0
