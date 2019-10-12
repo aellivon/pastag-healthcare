@@ -117,3 +117,36 @@ class BodyPhysique(HealthRecordCommonInfo):
 
     def __str__(self):
         return f"{self.user}"
+
+    def _calculate_bmi(self):
+        """
+            Calculates bmi for interpratation
+            Based on:
+            https://www.cdc.gov/healthyweight/assessing/bmi/childrens_bmi/childrens_bmi_formula.html
+        """
+        return self.weight_in_kilograms / (self.height_in_meters**2)
+
+    @property
+    def height_in_meters(self):
+        """
+            Convert height height_in_centimeters to height_in_meters
+        """
+        return self.height_in_centimeters * 0.01
+
+    @property
+    def bmi_state(self):
+        """
+            Underweight = <18.5.
+            Normal weight = 18.5–24.9.
+            Overweight = 25–29.9.
+            Obesity = BMI of 30 or greater.
+        """
+        bmi = self._calculate_bmi()
+        if bmi < 18.5:
+            return self.states.get('under')
+        elif bmi >= 18.5 and  bmi < 25:
+            return self.states.get('normal')
+        elif bmi >= 25 and bmi < 30:
+            return self.states.get('over')
+        elif bmi > 30:
+            return self.states.get('obese')
