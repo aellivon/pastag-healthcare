@@ -1,4 +1,4 @@
-Django==2.2.4
+Django==2.2.10
 django-widget-tweaks==1.4.5
 psycopg2==2.7.6.1
 psycopg2-binary==2.7.6.1
