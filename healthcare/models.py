@@ -1,5 +1,5 @@
 from django.db import models
-from django.contrib.auth import get_user_model
+
 
 class ActiveManager(models.Manager):
     """
@@ -18,27 +18,12 @@ class CommonInfo(models.Model):
     date_updated = models.DateTimeField(auto_now=True)
     created = models.DateTimeField(auto_now_add=True)
 
-    # This allows me to escape to default django query set if 
+    # This allows me to escape to default django query set if
     #   later in the project I need it
     objects = models.Manager()
-    
+
     # for active query set
-    active_objects =ActiveManager()
+    active_objects = ActiveManager()
 
     class Meta:
         abstract = True
-
-
-class HealthRecordCommonInfo(CommonInfo):
-    """
-        This is the model for the health records itself
-    """
-    
-    user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
-    details = models.CharField(max_length=50, null=True, blank=True)
-
-    class Meta:
-        abstract = True
-
-# NOTE: We are putting the models here since this could be extendable
-# in the near future! 
