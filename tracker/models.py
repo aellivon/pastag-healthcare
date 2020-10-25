@@ -10,17 +10,96 @@ class BloodPressure(HealthRecordCommonInfo):
     states = {
         "normal": "Normal Blood Pressure",
         "elevated": "Elevated Hypertension",
-        "high": "Hypertension Stage I",
-        "very_high": "Hypertension Stage II",
-        "risky": "Hypertension Crisis",
-        "low": "Hypotension"
+        "high": "Hypertension Stage I (High)",
+        "very_high": "Hypertension Stage II (Very High)",
+        "risky": "Hypertension Crisis (Risky)",
+        "low": "Alarmingly Low"
     }
 
-    systolic_pressure = models.IntegerField()
-    diastolic_pressure = models.IntegerField()
+    systolic_pressure = models.IntegerField(validators=[MinValueValidator(1), MaxValueValidator(999)])
+    diastolic_pressure = models.IntegerField(validators=[MinValueValidator(1), MaxValueValidator(999)])
+
+    # NOTE: These are separated to use these constants more manageable
+    #   epsecially useful in the paragraph feature!
+    #   (Also more maintanable)
+
+    # Note: The numbers should be increasing
+    # SYSTOLIC PART
+
+    BORDERLINE = {
+        "LOW": {
+            "SYSTOLIC": {
+                "UPPER": 89
+            },
+            "DIASTOLIC": {
+                "UPPER": 59
+            }
+        },
+        "NORMAL": {
+            "SYSTOLIC": {
+                "LOWER": 90,
+                "UPPER": 119
+            },
+            "DIASTOLIC": {
+                "LOWER": 60,
+                "UPPER": 79
+            }
+        },
+        "ELEVATED": {
+            "SYSTOLIC": {
+                "LOWER": 120,
+                "UPPER": 129
+            },
+            "DIASTOLIC": {
+                "LOWER": 60,
+                "UPPER": 79
+            }
+        },
+        "HIGH": {
+            "SYSTOLIC": {
+                "LOWER": 130,
+                "UPPER": 139
+            },
+            "DIASTOLIC": {
+                "LOWER": 80,
+                "UPPER": 89
+            }
+        },
+        "VERY_HIGH": {
+            "SYSTOLIC": {
+                "LOWER": 140,
+                "UPPER": 180
+            },
+            "DIASTOLIC": {
+                "LOWER": 90,
+                "UPPER": 120
+            }
+        },
+        "RISKY": {
+            "SYSTOLIC": {
+                "LOWER": 181
+            },
+            "DIASTOLIC": {
+                "LOWER": 121
+            }
+        }
+    }
 
     def __str__(self):
+        # TODO: change this
         return f"{self.user}"
+
+    def is_systolic_okay(self):
+        if (self.systolic_pressure >= self.BORDERLINE["NORMAL"]["SYSTOLIC"]["LOWER"] and
+                self.systolic_pressure <= self.BORDERLINE["NORMAL"]["SYSTOLIC"]["UPPER"]):
+            return True
+        return False
+
+    def is_diastolic_okay(self):
+        if (self.diastolic_pressure >= self.BORDERLINE["NORMAL"]["DIASTOLIC"]["LOWER"] and
+                self.diastolic_pressure <= self.BORDERLINE["NORMAL"]["DIASTOLIC"]["UPPER"]):
+            return True
+        return False
 
     @property
     def pressure(self):
@@ -33,27 +112,44 @@ class BloodPressure(HealthRecordCommonInfo):
     def state(self):
         # Based on
         # https://www.heart.org/en/health-topics/high-blood-pressure/understanding-blood-pressure-readings
+        # https://www.heart.org/en/health-topics/high-blood-pressure/the-facts-about-high-blood-pressure/low-blood-pressure-when-blood-pressure-is-too-low
 
-        if ((self.systolic_pressure >= 90 and self.systolic_pressure < 120) and
-            (self.diastolic_pressure >= 60 and self.diastolic_pressure < 80)):
+        if ((self.systolic_pressure >= self.BORDERLINE["NORMAL"]["SYSTOLIC"]["LOWER"] and
+                self.systolic_pressure <= self.BORDERLINE["NORMAL"]["SYSTOLIC"]["UPPER"]) and
+            (self.diastolic_pressure >= self.BORDERLINE["NORMAL"]["DIASTOLIC"]["LOWER"] and
+                self.diastolic_pressure <= self.BORDERLINE["NORMAL"]["DIASTOLIC"]["UPPER"])):
             # Range is 90 - 119
             # 60 - 79
             return self.states.get('normal')
-        elif((self.systolic_pressure >= 120 and self.systolic_pressure < 130) and
-            (self.diastolic_pressure >= 60 and self.diastolic_pressure < 80)):
+
+        elif((self.systolic_pressure >= self.BORDERLINE["ELEVATED"]["SYSTOLIC"]["LOWER"] and
+                self.systolic_pressure <= self.BORDERLINE["ELEVATED"]["SYSTOLIC"]["UPPER"]) and
+             (self.diastolic_pressure >= self.BORDERLINE["ELEVATED"]["DIASTOLIC"]["LOWER"] and
+                self.diastolic_pressure <= self.BORDERLINE["ELEVATED"]["DIASTOLIC"]["UPPER"])):
             # Range is 120 - 129 and 60 - 79
             return self.states.get('elevated')
-        elif(self.systolic_pressure > 180 or self.diastolic_pressure > 120):
+
+        elif(self.systolic_pressure >= self.BORDERLINE["RISKY"]["SYSTOLIC"]["LOWER"] or
+                self.diastolic_pressure >= self.BORDERLINE["RISKY"]["DIASTOLIC"]["LOWER"]):
             # Calculate the risky here since this one should override things
             # without constraints
             return self.states.get('risky')
-        elif(self.systolic_pressure >= 140 or self.diastolic_pressure >= 90):
+
+        elif((self.systolic_pressure >= self.BORDERLINE["VERY_HIGH"]["SYSTOLIC"]["LOWER"] and
+                self.systolic_pressure <= self.BORDERLINE["VERY_HIGH"]["SYSTOLIC"]["UPPER"]) or
+             (self.diastolic_pressure >= self.BORDERLINE["VERY_HIGH"]["DIASTOLIC"]["LOWER"] and
+                self.diastolic_pressure <= self.BORDERLINE["VERY_HIGH"]["DIASTOLIC"]["UPPER"])):
             return self.states.get('very_high')
-        elif ((self.systolic_pressure >= 130 and self.systolic_pressure < 140) or
-              (self.diastolic_pressure >= 80 and self.diastolic_pressure < 90)):
+
+        elif((self.systolic_pressure >= self.BORDERLINE["HIGH"]["SYSTOLIC"]["LOWER"] and
+                self.systolic_pressure <= self.BORDERLINE["HIGH"]["SYSTOLIC"]["UPPER"]) or
+             (self.diastolic_pressure >= self.BORDERLINE["HIGH"]["DIASTOLIC"]["LOWER"] and
+                self.diastolic_pressure <= self.BORDERLINE["HIGH"]["DIASTOLIC"]["UPPER"])):
             # Range is 130 - 139 OR 80 - 89
             return self.states.get('high')
-        elif (self.systolic_pressure < 90 or self.diastolic_pressure < 60):
+
+        elif (self.systolic_pressure <= self.BORDERLINE["LOW"]["SYSTOLIC"]["UPPER"] or
+                self.diastolic_pressure <= self.BORDERLINE["LOW"]["DIASTOLIC"]["UPPER"]):
             # Range is 90 down and 60 down
             return self.states.get('low')
 
