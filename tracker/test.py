@@ -1,6 +1,6 @@
 from django.test import TestCase
 
-from .models import BloodPressure
+from .models import BloodPressure, BodyPhysique
 
 # View testcases
 
