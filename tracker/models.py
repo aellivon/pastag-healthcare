@@ -4,7 +4,7 @@ from healthcare.models import HealthRecordCommonInfo
 
 class BloodPressure(HealthRecordCommonInfo):
     """
-        This is the model for a bloodpressure record
+    This is the model for a bloodpressure record
     """
 
     states = {
@@ -104,7 +104,7 @@ class BloodPressure(HealthRecordCommonInfo):
     @property
     def pressure(self):
         """
-            A more readable format for blood pressure
+        A more readable format for blood pressure
         """
         return f"{self.systolic_pressure}/{self.diastolic_pressure}"
 
@@ -156,53 +156,99 @@ class BloodPressure(HealthRecordCommonInfo):
 
 class BodyPhysique(HealthRecordCommonInfo):
     """
-        This is the model for a the user's body physique record
+    This is the model for a the user's body physique record
     """
-
     states = {
         "under": "Underweight",
-        "normal": "Normal weight",
+        "normal": "Normal Weight",
         "over": "Overweight",
         "obese": "Obesity"
     }
 
     # Weight
-    weight_in_kilograms = models.IntegerField()
+    weight_in_kilograms = models.DecimalField(max_digits=5, decimal_places=2, verbose_name="Weight (kg)",
+                                              validators=[MinValueValidator(1), MaxValueValidator(999)])
     # Height
-    height_in_centimeters = models.IntegerField()
+    height_in_centimeters = models.DecimalField(max_digits=5, decimal_places=2, verbose_name="Height (cm)",
+                                                validators=[MinValueValidator(1), MaxValueValidator(999)])
+
+    # Borderline constants
+    BORDERLINE = {
+        "UNDER": {
+            "UPPER": 18.49
+        },
+        "NORMAL": {
+            "LOWER": 18.5,
+            "UPPER": 24.99
+        },
+        "OVER": {
+            "LOWER": 25,
+            "UPPER": 29.99
+        },
+        "OBESE": {
+            "LOWER": 30
+        }
+    }
 
     def __str__(self):
         return f"{self.user}"
 
-    def _calculate_bmi(self):
+    def _strip_zero(self, num):
+        if num == num.to_integral():
+            return num.to_integral()
+        return num.normalize()
+
+    @property
+    def height(self):
+        # Trims zeroes, should only be used on displaying numbers
+        return self._strip_zero(self.height_in_centimeters)
+
+    @property
+    def weight(self):
+        # Trims zeroes, should only be used on displaying numbers
+        return self._strip_zero(self.weight_in_kilograms)
+
+    @property
+    def height_weight_and_bmi(self):
+        return f"({self.height}cm  & {self.weight}kg)"
+
+    @property
+    def bmi(self):
         """
             Calculates bmi for interpratation
             Based on:
             https://www.cdc.gov/healthyweight/assessing/bmi/childrens_bmi/childrens_bmi_formula.html
         """
-        return self.weight_in_kilograms / (self.height_in_meters**2)
+        return round(self.weight_in_kilograms / (self.height_in_meters**2), 2)
 
     @property
     def height_in_meters(self):
         """
             Convert height height_in_centimeters to height_in_meters
         """
-        return self.height_in_centimeters * 0.01
+        return self.height_in_centimeters * Decimal(0.01)
+
+    @property
+    def state(self):
+        """
+            Return the bmi state here too, do not merge bmi state and state.
+            We might have multiple state on a body physique
+        """
+        return self.bmi_state
 
     @property
     def bmi_state(self):
         """
             Underweight = <18.5.
-            Normal weight = 18.5–24.9.
-            Overweight = 25–29.9.
+            Normal weight = 18.5–24.99
+            Overweight = 25–29.99
             Obesity = BMI of 30 or greater.
         """
-        bmi = self._calculate_bmi()
-        if bmi < 18.5:
+        if self.bmi <= self.BORDERLINE["UNDER"]["UPPER"]:
             return self.states.get('under')
-        elif bmi >= 18.5 and bmi < 25:
+        elif self.bmi >= self.BORDERLINE["NORMAL"]["LOWER"] and self.bmi <= self.BORDERLINE["NORMAL"]["UPPER"]:
             return self.states.get('normal')
-        elif bmi >= 25 and bmi < 30:
+        elif self.bmi >= self.BORDERLINE["OVER"]["LOWER"] and self.bmi <= self.BORDERLINE["OVER"]["UPPER"]:
             return self.states.get('over')
-        elif bmi > 30:
+        elif self.bmi >= self.BORDERLINE["OBESE"]["LOWER"]:
             return self.states.get('obese')
