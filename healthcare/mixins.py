@@ -1,3 +1,9 @@
+ 
+from datetime import datetime
+from django.utils import timezone
+
+from pastagcore.shortcuts import get_object_or_403
+
 from .models import BloodPressure, BodyPhysique
 
 class BloodPressureMixin(object):
@@ -39,29 +45,18 @@ class BodyPhysiqueMixin(object):
             Gets a user's latest body_physique
         """
 
-        latest_body_physique = BodyPhysique.active_objects.filter(user=user).last()
+        latest = BodyPhysique.active_objects.filter(user=user).order_by('record_date').last()
 
-        if latest_body_physique:
-            return latest_body_physique
+        if latest:
+            return latest
         # Else return n/a string
         return None
 
-    def get_my_latest_weight(self):
+    def get_my_latest_height(self, user):
         """
-            if latest recored exists. return weight_in_kilograms
-            else return 'n/a'
+            Gets the user latest height
         """
-        physique = self.get_my_latest_body_physique()
-        if physique:
-            return physique.weight_in_kilograms
-        return 'n/a'
-
-    def get_my_latest_height(self):
-        """
-            if latest recored exists. return centimeters
-            else return 'n/a'
-        """
-        physique = self.get_my_latest_body_physique()
-        if physique:
-            return physique.height_in_centimeters
-        return 'n/a'
+        body_physique = self.get_user_latest_body_physique(self.request.user)
+        if body_physique:
+            return body_physique.height_in_centimeters
+        return None
