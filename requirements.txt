@@ -5,3 +5,4 @@ psycopg2-binary==2.7.6.1
 PyJWT==1.7.1
 pytz==2018.9
 sqlparse==0.3.0
+djangorestframework==3.12.1
