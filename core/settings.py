@@ -40,8 +40,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'widget_tweaks',
+    'core',
     'healthcare',
-    'tracker',
 ]
 
 # Database
@@ -64,7 +64,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-ROOT_URLCONF = 'healthcare.urls'
+ROOT_URLCONF = 'core.urls'
 
 TEMPLATES = [
     {
@@ -82,7 +82,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'healthcare.wsgi.application'
+WSGI_APPLICATION = 'core.wsgi.application'
 
 
 JWT_AUTH = {
