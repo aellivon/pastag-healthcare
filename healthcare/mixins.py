@@ -22,12 +22,12 @@ class BloodPressureMixin(object):
             Gets a user's latest blood pressure
         """
 
-        latest_blood_pressure = BloodPressure.active_objects.filter(user=user).last()
+        latest = BloodPressure.active_objects.filter(user=user).order_by('record_date').last()
 
-        if latest_blood_pressure:
-            return latest_blood_pressure
+        if latest:
+            return latest
         # Else return n/a string
-        return 'n/a'
+        return None
 
 class BodyPhysiqueMixin(object):
     """
