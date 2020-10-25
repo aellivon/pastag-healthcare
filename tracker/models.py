@@ -1,8 +1,86 @@
 from django.db import models
-from healthcare.models import HealthRecordCommonInfo
+from django.core.validators import MaxValueValidator, MinValueValidator
+from django.contrib.auth import get_user_model
+from django.utils import timezone
+
+from healthcare.models import CommonInfo
+
+from decimal import Decimal
 
 
-class BloodPressure(HealthRecordCommonInfo):
+class HealthRecord(CommonInfo):
+    """
+        This is the model for the health records itself
+    """
+
+    record_types = {
+        "blood_pressure": 0,
+        "body_physique": 1
+    }
+
+    user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
+    details = models.TextField(max_length=255, null=True, blank=True)
+    record_date = models.DateTimeField(null=True)
+    key_words = models.TextField(max_length=1024, null=True, blank=True)
+
+    def save(self, force_insert=False, force_update=False, using=None,
+             update_fields=None):
+
+        # This adds record date now when submitted empty
+        if not self.record_date:
+            self.record_date = timezone.localtime(timezone.now())
+
+        if not self.details:
+            self.details = "No details available"
+
+        # TODO: There must be a better way to search a date by string!
+        record_date_with_time_zone = timezone.localtime(self.record_date).strftime('%B %d, %Y %I %M %I:%M %p')
+
+        self.key_words = ""
+        self.key_words += f'{record_date_with_time_zone} {self.state}'
+
+        return super(HealthRecord, self).save(force_insert, force_update, using,
+                                              update_fields)
+
+    @property
+    def formatted_record_date(self):
+        # Custom format record to a readable format
+        record_date_with_time_zone = timezone.localtime(self.record_date)
+        return f"{record_date_with_time_zone.strftime('%B %d, %Y, %I:%M %p')}"
+
+    @property
+    def date(self):
+        record_date_with_time_zone = timezone.localtime(self.record_date)
+        return f"{record_date_with_time_zone.strftime('%B %d, %Y')}"
+
+    @property
+    def time(self):
+        record_date_with_time_zone = timezone.localtime(self.record_date)
+        return f"{record_date_with_time_zone.strftime('%I:%M %p')}"
+
+    @property
+    def state(self):
+        # If the parent state is called, try to get type or return n/a
+        # We need to define the type of record first
+
+        if hasattr(self, 'bloodpressure'):
+            return self.bloodpressure.state
+        elif hasattr(self, 'bodyphysique'):
+            return self.bodyphysique.state
+        return "n/a"
+
+    def get_record_type(self):
+        # If the parent state is called, try to get type or return n/a
+        # We need to define the type of record first
+
+        if hasattr(self, 'bloodpressure'):
+            return self.record_types.get("blood_pressure")
+        elif hasattr(self, 'bodyphysique'):
+            return self.record_types.get("body_physique")
+        return "n/a"
+
+
+class BloodPressure(HealthRecord):
     """
     This is the model for a bloodpressure record
     """
@@ -154,7 +232,7 @@ class BloodPressure(HealthRecordCommonInfo):
             return self.states.get('low')
 
 
-class BodyPhysique(HealthRecordCommonInfo):
+class BodyPhysique(HealthRecord):
     """
     This is the model for a the user's body physique record
     """
@@ -252,3 +330,28 @@ class BodyPhysique(HealthRecordCommonInfo):
             return self.states.get('over')
         elif self.bmi >= self.BORDERLINE["OBESE"]["LOWER"]:
             return self.states.get('obese')
+
+        def is_bmi_normal(self):
+            """
+                Checks if the bmi is normal
+            """
+            if self.bmi >= self.BORDERLINE["NORMAL"]["LOWER"] and self.bmi <= self.BORDERLINE["NORMAL"]["UPPER"]:
+                return True
+            return False
+
+    def calculate_penalty(self):
+        """
+            Calculates the penalty the bmi state.
+            This is directly connected to the evaluation on gui.
+        """
+        if not self.bmi_state == self.states.get('normal'):
+            # only calculate penalty if normal
+            if (self.bmi_state == self.states.get('over') or
+                    self.bmi_state == self.states.get('obese')):
+
+                # Group higher states to make it's baseline 30
+                # TODO: Test this
+                import math
+                return math.floor(30 - self.bmi)
+
+        return 0
