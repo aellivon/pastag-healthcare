@@ -20,7 +20,7 @@ pep517==0.8.2
 progress==1.5
 psycopg2==2.7.6.1
 psycopg2-binary==2.7.6.1
-PyJWT==1.7.1
+PyJWT==2.4.0
 pyparsing==2.4.6
 pytoml==0.1.21
 pytz==2018.9
