@@ -3,3 +3,5 @@ media
 db.sqlite3
 local_settings.py
 env/
+node_modules
+package-lock.json
