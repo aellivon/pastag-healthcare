@@ -1,0 +1,31 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+    <head>
+
+        {% include "common/base_header.html" %}
+
+        <title> {% block title %} {% endblock %}</title>
+
+        {% include "common/styles.html" %}
+        {% block specific_css %}
+        {% endblock %}  
+
+        <meta name="viewport" content="width=device-width,initial-scale=1.0">
+
+    </head>
+    
+    <body class="body-homepage">
+
+        {% block menubar %}
+        {% endblock %}
+
+        {% block body %}
+        {% endblock %}
+
+    </body>
+
+    {% include "common/scripts.html" %}
+
+    {% block specific_js %}
+    {% endblock %}

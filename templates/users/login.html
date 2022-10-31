@@ -1,9 +1,73 @@
-<!DOCTYPE html>
-<html>
-<body>
+{% extends 'base.html' %}
+{% load static %}
+{% load widget_tweaks %}
 
-<h1>PASTAG HEALTHCARE</h1>
-<p>Login Page.</p>
+{% block title %}
+    Login
+{% endblock %}
 
-</body>
-</html>
+{% block specific_css %}
+    <link rel="stylesheet" type="text/css" href="{% static '/non-vendors/css/login.css' %}">
+{% endblock %}
+
+{% block body %}
+    <div class="fade login-background "> </div>
+    <div class="mr-0 ml-0 d-flex justify-content-center align-items-center"></div>
+        <div class="circle-particles"></div>
+        <div class="circle-particles"></div>
+        <div class="circle-particles"></div>
+        <div class="circle-particles"></div>
+        <div class="circle-particles"></div>
+        <div class="circle-particles"></div>
+        <div class="container fade">
+            <div class="row ">
+                <img src="{% static '/non-vendors/img/sun-logo.svg' %}" alt="" class="logo-circle" id="svg-dashboard-white">
+                <div class="login-box dirty-white col-12">
+                        <form method="post" novalidate>
+                            {% csrf_token %}
+                            <span class="d-flex justify-content-center">
+                                <h2 class="log-in-title "> Sign In to Pascal </h2>
+                            </span>
+                            
+                            {% if form.errors %}
+                                {% for error in form.non_field_errors %}
+                                    <div class="alert alert-danger error_box">
+                                        {{ error }}
+                                    </div>
+                                {% endfor %}
+                            {% endif %}
+                            <label for="" class="label-margin label-form mb-0">Email</label>
+
+                                {{ form.email | add_class:'form-control'}}
+                                {% if form.email.errors %}
+                                    {% for error in form.email.errors %}
+                                        <div class="invalid-feedback">
+                                            <strong>{{ error }}</strong>
+                                        </div>
+                                    {% endfor %}
+                                {% endif %}
+
+
+                                <label for="" class="label-margin label-form mt-2 mb-0">Password</label>
+                                {{ form.password | add_class:'form-control mb5' }}
+                                {% if form.password.errors %}
+                                    {% for error in form.password.errors %}
+                                        <div class="invalid-feedback">
+                                            <strong>{{ error }}</strong>
+                                        </div>
+                                    {% endfor %}
+                                {% endif %}
+
+                            <button  id="sign-up-submit" type="submit" class="btn btn-info button-margin mt25">Sign In</button>
+                        </form>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+
+
+{% block specific_js %}
+    <script src="{% static '/non-vendors/js/'|add:static_supbpath|add:'/login/login.js' %}" type="module"></script>
+{% endblock %}
