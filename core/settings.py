@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'core',
     'healthcare',
     'users',
+    'utilities'
 ]
 
 # Database

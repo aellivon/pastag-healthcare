@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
-{% load widget_tweaks %}
+{% load widget_tweaks add_class_validations %}
 
 {% block title %}
     Login
@@ -38,7 +38,7 @@
                             {% endif %}
                             <label for="" class="label-margin label-form mb-0">Email</label>
 
-                                {{ form.email | add_class:'form-control'}}
+                                {{ form.email | add_class:'form-control'| add_class_validations:"is-invalid" }}
                                 {% if form.email.errors %}
                                     {% for error in form.email.errors %}
                                         <div class="invalid-feedback">
@@ -49,7 +49,7 @@
 
 
                                 <label for="" class="label-margin label-form mt-2 mb-0">Password</label>
-                                {{ form.password | add_class:'form-control mb5' }}
+                                {{ form.password | add_class:'form-control mb5'| add_class_validations:"is-invalid" }}
                                 {% if form.password.errors %}
                                     {% for error in form.password.errors %}
                                         <div class="invalid-feedback">
