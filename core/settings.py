@@ -138,7 +138,10 @@ STATIC_URL = '/static/'
 MEDIA_URL = '/media/'
 
 STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'static')
+    os.path.join(BASE_DIR, 'static'),
+    # TODO: The node modules be a little too big in the future.
+    # Might want to use Gulp to copy the needed scripts.
+    os.path.join(BASE_DIR, 'node_modules')
 ]
 
 TESTING_BUILD = False

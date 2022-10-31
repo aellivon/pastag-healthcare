@@ -1,0 +1,156 @@
+
+/* Extra Small, Phones  */
+@media only screen and (min-width : 320px) {
+	.align-xs-left-u
+	{
+		text-align: left;
+	}
+	.align-xs-center-u
+	{
+		text-align: center;
+	}
+	.align-xs-right-u
+	{
+		text-align: right;
+	}
+
+
+	.align-xs-left-d, .align-sm-left-d, .align-md-left-d, .align-lg-left-d, .align-xl-left-d
+	{
+		text-align: left;
+	}
+	.align-xs-center-d, .align-sm-center-d, .align-md-center-d, .align-lg-center-d, .align-xl-center-d
+	{
+		text-align: center;
+	}
+	.align-xs-right-d, .align-sm-right-d, .align-md-right-d, .align-lg-right-d, .align-xl-right-d
+	{
+		text-align: right;
+	}
+}
+
+
+/* Small Devices, Phones */ 
+@media only screen and (min-width : 576px) {
+	.align-sm-left-u
+	{
+		text-align: left;
+	}
+	.align-sm-center-u
+	{
+		text-align: center;
+	}
+	.align-sm-right-u
+	{
+		text-align: right;
+	}
+
+
+	.align-xs-left-d
+	{
+		text-align: initial;
+	}
+	.align-xs-center-d
+	{
+		text-align: initial;
+	}
+	.align-xs-right-d
+	{
+		text-align: initial;
+	}
+}
+
+
+/* Medium Devices, Tablets */
+@media only screen and (min-width : 768px) {
+	.align-md-left-u
+	{
+		text-align: left;
+	}
+	.align-md-center-u
+	{
+		text-align: center;
+	}
+	.align-md-right-u
+	{
+		text-align: right;
+	}
+
+
+	.align-xs-left-d, .align-sm-left-d
+	{
+		text-align: initial;
+	}
+	.align-xs-center-d, .align-sm-center-d
+	{
+		text-align: initial;
+	}
+	.align-xs-right-d, .align-sm-right-d
+	{
+		text-align: initial;
+	}
+}
+
+/* Large Devices, Desktops */
+@media only screen and (min-width : 992px) {
+	.align-lg-left-u
+	{
+		text-align: left;
+	}
+	.align-lg-center-u
+	{
+		text-align: center;
+	}
+	.align-lg-right-u
+	{
+		text-align: right;
+	}
+
+
+	.align-xs-left-d, .align-sm-left-d, .align-md-left-d
+	{
+		text-align: initial;
+	}
+	.align-xs-center-d, .align-sm-center-d, .align-md-center-d
+	{
+		text-align: initial;
+	}
+	.align-xs-right-d, .align-sm-right-d, .align-md-right-d
+	{
+		text-align: initial;
+	}
+}
+
+/* Extra Large Devices, Wide Screens */
+@media only screen and (min-width : 1200px) {
+	.align-xl-left-u
+	{
+		text-align: left;
+	}
+	.align-xl-center-u
+	{
+		text-align: center;
+	}
+	.align-xl-right-u
+	{
+		text-align: right;
+	}
+
+
+	.align-xs-left-d, .align-sm-left-d, .align-md-left-d, .align-lg-left-d
+	{
+		text-align: initial;
+	}
+	.align-xs-center-d, .align-sm-center-d, .align-md-center-d, .align-lg-center-d
+	{
+		text-align: initial;
+	}
+	.align-xs-right-d, .align-sm-right-d, .align-md-right-d, .align-lg-right-d
+	{
+		text-align: initial;
+	}
+}
+
+.neat-white{
+	background-color: #ECEFF4;
+}
